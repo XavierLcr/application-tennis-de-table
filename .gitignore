@@ -1,1 +1,9 @@
+# Sauvegarde
 *.yaml
+
+# Fichiers temporaires
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.log
