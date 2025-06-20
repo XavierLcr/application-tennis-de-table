@@ -1,0 +1,126 @@
+QMainWindow {
+    background-color: #F7F7F7;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    color: #333333;
+}
+
+/* Onglets */
+QTabWidget::pane {
+    border: 1px solid #A8C0E0;
+    background: #FFFFFF;
+}
+
+QTabBar::tab {
+    background: #C7DDEF;
+    color: #333333;
+    padding: 8px 16px;
+    border: 1px solid #A8C0E0;
+    border-bottom: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    min-width: 100px;
+}
+
+QTabBar::tab:selected {
+    background: #FFFFFF;
+    font-weight: bold;
+    border-bottom: 1px solid #FFFFFF;
+}
+
+QTabBar::tab:hover {
+    background: "#CFC4E2";
+}
+
+/* Boutons */
+QPushButton {
+    background-color: #F4C2C2;  /* Rouge adouci */
+    color: #333333;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+QPushButton:hover {
+    background-color: #E8A0A0;
+}
+
+/* Champs de texte et combo */
+QLineEdit, QComboBox {
+    border: 1px solid #A8C0E0;
+    border-radius: 4px;
+    padding: 4px;
+    background-color: #FFFFFF;
+    color: #333333;
+}
+
+/* SpinBox */
+QSpinBox {
+    border: 1px solid #A8C0E0;
+    border-radius: 4px;
+    padding: 2px 4px;
+    background-color: #FFFFFF;
+    color: #333333;
+}
+
+
+QSpinBox::up-button {
+    width: 16px;
+    height: 10px;
+    border-left: none;
+    background-color: #D0E4FF;
+}
+
+QSpinBox::down-button {
+    width: 16px;
+    height: 10px;
+    border-left: none;
+    background-color: #D0E4FF;
+}
+
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #B0D4FF;
+}
+
+QSpinBox::up-button:pressed, QSpinBox::down-button:pressed {
+    background-color: #90C0FF;
+}
+
+/* CheckBox */
+QCheckBox {
+    color: #333333;
+}
+
+/* GroupBox */
+QGroupBox {
+    border: 1px solid #A8C0E0;
+    border-radius: 8px;
+    margin-top: 6px;
+    padding: 6px;
+    background-color: #FAFAFA;
+}
+
+QGroupBox::title {
+    left: 10px;
+    padding: 0 4px;
+    background-color: #FAFAFA;
+}
+
+/* ScrollArea */
+QScrollArea {
+    border: none;
+    background-color: #FFFFFF;
+}
+
+/* Labels */
+QLabel {
+    color: #333333;
+    font-weight: 500;
+}
+
+/* Ajout optionnel : survol des champs */
+QLineEdit:hover, QComboBox:hover, QSpinBox:hover {
+    background-color: #F0F8FF;
+}
+
+
