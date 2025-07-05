@@ -1,0 +1,16 @@
+# Le type d'intervalles considéré est [min ; max[
+intervalles_gagnant_points:
+  - min: -inf
+    max: -3
+    points: 4
+  - min: -3
+    max: 0
+    points: 6
+  - min: 1
+    max: 4
+    points: 8
+  - min: 4
+    max: inf
+    points: 10
+
+points_defaite: 2
