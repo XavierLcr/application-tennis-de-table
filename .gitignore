@@ -1,5 +1,5 @@
 # Sauvegarde
-*.yaml
+sauvegarde_parties.yaml
 
 # Fichiers temporaires
 *.pyc
