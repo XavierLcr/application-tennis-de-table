@@ -25,26 +25,45 @@ from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtGui import QIcon
 import fonctions_utiles
 
-
-if os.path.exists("sauvegarde_param.yaml"):
+# Chargement d'une sauvegrade si elle existe
+try:
     with open(
-        os.path.join("sauvegarde_param.yaml"),
+        os.path.join("sauvegarde_parties.yaml"),
         "r",
         encoding="utf-8",
     ) as file:
         sauvegarde = yaml.safe_load(file)
-else:
+except:
     sauvegarde = {}
 
+# Chargement des intervalles de points s'ils existent
+try:
 
-# Paramètres
-intervalles_gagnant_points = [
-    ((float("-inf"), -3), 4),
-    ((-3, 0), 6),
-    ((1, 4), 8),
-    ((4, float("inf")), 10),
-]
-points_defaite = 2
+    with open(
+        os.path.join("points_gagnes_par_match.yaml"), "r", encoding="utf-8"
+    ) as file:
+        points_par_match = yaml.safe_load(file)
+
+        # Récupération des points du gagnant
+        intervalles_gagnant_points = [
+            ((float(item["min"]), float(item["max"])), item["points"])
+            for item in points_par_match["intervalles_gagnant_points"]
+        ]
+
+        # Récupération des points du perdant
+        points_defaite = points_par_match["points_defaite"]
+
+
+except:
+
+    # Valeurs par défaut
+    intervalles_gagnant_points = [
+        ((float("-inf"), -3), 4),
+        ((-3, 0), 6),
+        ((1, 4), 8),
+        ((4, float("inf")), 10),
+    ]
+    points_defaite = 2
 
 
 class Onglet1(QWidget):
@@ -318,7 +337,7 @@ class Onglet1(QWidget):
     def creer_sauvegarde(self):
 
         with open(
-            os.path.join("sauvegarde_param.yaml"),
+            os.path.join("sauvegarde_parties.yaml"),
             "w",
             encoding="utf-8",
         ) as f:
