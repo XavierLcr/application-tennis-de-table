@@ -11,6 +11,7 @@ setup(
             "include_files": [
                 "points_gagnes_par_match.yaml",
                 "theme.css",
+                "logo-club.ico",
             ],
         }
     },
