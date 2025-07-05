@@ -6,8 +6,10 @@ setup(
     description="",
     options={
         "build_exe": {
+            "build_exe": r"C:\Users\xaruo\Documents\Tennis de table\Logiciel pour Florian\application-tennis-de-table\application",
             "packages": ["os", "sys", "PyQt6", "yaml"],
             "include_files": [
+                "points_gagnes_par_match.yaml",
                 "theme.css",
             ],
         }

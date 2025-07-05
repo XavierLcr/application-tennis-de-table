@@ -1,6 +1,9 @@
 # Sauvegarde
 sauvegarde_parties.yaml
 
+# .exe
+application/
+
 # Fichiers temporaires
 *.pyc
 __pycache__/
