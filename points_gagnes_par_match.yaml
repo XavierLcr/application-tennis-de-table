@@ -1,3 +1,4 @@
+# Points du vainqueur
 # Le type d'intervalles considéré est [min ; max[
 intervalles_gagnant_points:
   - min: -inf
@@ -13,4 +14,5 @@ intervalles_gagnant_points:
     max: inf
     points: 10
 
+# Points du perdant
 points_defaite: 2
