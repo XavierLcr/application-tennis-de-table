@@ -32,6 +32,11 @@ QTabBar::tab:hover {
     background: "#CFC4E2";
 }
 
+QWidget {
+    background-color: #FFFFFF;
+}
+
+
 /* Boutons */
 QPushButton {
     background-color: #F4C2C2;  /* Rouge adouci */
@@ -109,7 +114,7 @@ QGroupBox::title {
 /* ScrollArea */
 QScrollArea {
     border: none;
-    background-color: #FFFFFF;
+    background-color: transparent;
 }
 
 /* Labels */
@@ -122,5 +127,4 @@ QLabel {
 QLineEdit:hover, QComboBox:hover, QSpinBox:hover {
     background-color: #F0F8FF;
 }
-
 

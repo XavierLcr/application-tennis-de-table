@@ -102,7 +102,6 @@ class Onglet1(QWidget):
 
         # --- Matchs ---
         groupbox_match = QGroupBox("Ajouter un match entre deux individus")
-        groupbox_match_layout = QVBoxLayout()
         self.gagnant = QComboBox()
         self.perdant = QComboBox()
         btn_match = QPushButton("Ajouter le match")
@@ -110,12 +109,27 @@ class Onglet1(QWidget):
         form_layout = QFormLayout()
         form_layout.addRow("Vainqueur :", self.gagnant)
         form_layout.addRow("Perdant :", self.perdant)
+        form_layout.addRow(btn_match)
+        groupbox_match.setLayout(form_layout)
 
-        groupbox_match_layout.addLayout(form_layout)
-        groupbox_match_layout.addWidget(btn_match)
-        groupbox_match.setLayout(groupbox_match_layout)
+        # --- Supprimer un individu ---
+        groupbox_supprimer_indiv = QGroupBox("Supprimer un individu")
+        self.layout_suppression_indiv = QVBoxLayout()
+        self.liste_indiv_suppression = QComboBox()
+        self.bouton_supprimer_individu = QPushButton("Supprimer cet individu")
+        self.bouton_supprimer_individu.clicked.connect(self.supprimer_joueur)
+        self.layout_suppression_indiv.addWidget(self.liste_indiv_suppression)
+        self.layout_suppression_indiv.addWidget(self.bouton_supprimer_individu)
+        groupbox_supprimer_indiv.setLayout(self.layout_suppression_indiv)
 
-        layout.addWidget(groupbox_match)
+        # Mise côte-à-côte des deux groupboxes
+        groupbox_match_layout = QHBoxLayout()
+        groupbox_match_layout.addWidget(groupbox_match)
+        groupbox_match_layout.addWidget(groupbox_supprimer_indiv)
+        groupbox_match_layout.setStretch(0, 2)  # petite colonne gauche
+        groupbox_match_layout.setStretch(1, 1)
+
+        layout.addLayout(groupbox_match_layout)
 
         self.nom_partie.currentIndexChanged.connect(self.initialiser_sauvegarde)
 
@@ -130,6 +144,7 @@ class Onglet1(QWidget):
                 self.nom_partie.addItem(nom)
                 self.gagnant.clear()
                 self.perdant.clear()
+                self.liste_indiv_suppression.clear()
                 self.creer_sauvegarde()
                 # self.nom_partie.setCurrentIndex(self.nom_partie.currentIndex() + 1)
                 self.data_changed.emit(self.individus)
@@ -138,8 +153,22 @@ class Onglet1(QWidget):
                 QMessageBox.warning(self, "Erreur", "Cette partie existe déjà.")
 
     def supprimer_partie(self):
+
+        # Récupération du nom de la partie
         nom = self.nom_partie.currentText()
-        if nom:
+        if not nom:
+            return
+
+        # Pop-up de confirmation
+        reponse = QMessageBox.question(
+            self,
+            "Confirmation de suppression",
+            f"Souhaitez-vous définitivement supprimer la partie « {nom} » ?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        )
+
+        # Si confirmation de suppression
+        if reponse == QMessageBox.StandardButton.Yes:
             self.sauvegarde = {
                 cle: valeur for cle, valeur in sauvegarde.items() if cle != nom
             }
@@ -151,8 +180,48 @@ class Onglet1(QWidget):
             self.nom_partie.blockSignals(False)
             self.gagnant.clear()
             self.perdant.clear()
+            self.liste_indiv_suppression.clear()
             self.creer_sauvegarde()
             self.data_changed.emit(self.individus)
+
+    def supprimer_joueur(self):
+
+        # Récupération du nom de la partie
+        nom_partie = self.nom_partie.currentText()
+        if not nom_partie:
+            return
+
+        # Récupération du nom du joueur
+        nom_joueur = self.liste_indiv_suppression.currentText()
+        if not nom_joueur:
+            return
+
+        # Pop-up de confirmation
+        reponse = QMessageBox.question(
+            self,
+            "Confirmation de suppression",
+            f"Souhaitez-vous définitivement supprimer {nom_joueur} de cette partie ?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        )
+
+        # Si confirmation de suppression
+        if reponse == QMessageBox.StandardButton.Yes:
+
+            # Si le joueur est dans la partie
+            if nom_joueur in self.sauvegarde[nom_partie]:
+
+                # Suppression
+                del self.sauvegarde[nom_partie][nom_joueur]
+
+                self.individus = self.sauvegarde[self.nom_partie.currentText()]
+                self.gagnant.clear()
+                self.perdant.clear()
+                self.liste_indiv_suppression.clear()
+                self.gagnant.addItems(list(self.individus.keys()))
+                self.perdant.addItems(list(self.individus.keys()))
+                self.liste_indiv_suppression.addItems(list(self.individus.keys()))
+                self.creer_sauvegarde()
+                self.data_changed.emit(self.individus)
 
     def initialiser_sauvegarde(self):
         if self.nom_partie.currentText() is not None:
@@ -162,8 +231,10 @@ class Onglet1(QWidget):
                 self.input_nombre.setValue(0)
                 self.gagnant.clear()
                 self.perdant.clear()
+                self.liste_indiv_suppression.clear()
                 self.gagnant.addItems(list(self.individus.keys()))
                 self.perdant.addItems(list(self.individus.keys()))
+                self.liste_indiv_suppression.addItems(list(self.individus.keys()))
                 self.data_changed.emit(self.individus)
 
     def ajouter_individu(self):
@@ -188,6 +259,7 @@ class Onglet1(QWidget):
             self.individus[nom] = indiv
             self.gagnant.addItem(nom)
             self.perdant.addItem(nom)
+            self.liste_indiv_suppression.addItem(nom)
             self.input_nom.clear()
             self.input_nombre.setValue(0)
 
