@@ -60,7 +60,7 @@ except:
     intervalles_gagnant_points = [
         ((float("-inf"), -3), 4),
         ((-3, 0), 6),
-        ((1, 4), 8),
+        ((0, 4), 8),
         ((4, float("inf")), 10),
     ]
     points_defaite = 2
