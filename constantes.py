@@ -23,13 +23,16 @@ dossier_donnees = "Données"
 
 
 try:
+
     with open(
         os.path.join(dossier_donnees, "sauvegarde_parties.yaml"),
         "r",
         encoding="utf-8",
     ) as file:
         sauvegarde = yaml.safe_load(file)
+
 except:
+
     sauvegarde = {}
 
 
