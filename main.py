@@ -119,7 +119,7 @@ class Onglet1(QWidget):
         nom = self.nom_partie.currentText()
         if nom:
             if nom not in list(self.sauvegarde.keys()):
-                self.sauvegarde[nom] = {}
+                self.sauvegarde[nom] = {"Joueurs": {}, "Matchs": {}}
                 self.individus = {}
                 self.nom_partie.addItem(nom)
                 self.gagnant.clear()
@@ -190,12 +190,14 @@ class Onglet1(QWidget):
         if reponse == QMessageBox.StandardButton.Yes:
 
             # Si le joueur est dans la partie
-            if nom_joueur in self.sauvegarde[nom_partie]:
+            if nom_joueur in self.sauvegarde[nom_partie].get("Joueurs", {}):
 
                 # Suppression
-                del self.sauvegarde[nom_partie][nom_joueur]
+                del self.sauvegarde[nom_partie]["Joueurs"][nom_joueur]
 
-                self.individus = self.sauvegarde[self.nom_partie.currentText()]
+                self.individus = self.sauvegarde[self.nom_partie.currentText()].get(
+                    "Joueurs", {}
+                )
                 self.gagnant.clear()
                 self.perdant.clear()
                 self.liste_indiv_suppression.clear()
@@ -208,7 +210,9 @@ class Onglet1(QWidget):
     def initialiser_sauvegarde(self):
         if self.nom_partie.currentText() is not None:
             if self.nom_partie.currentText() in self.sauvegarde.keys():
-                self.individus = self.sauvegarde[self.nom_partie.currentText()]
+                self.individus = self.sauvegarde[self.nom_partie.currentText()].get(
+                    "Joueurs", {}
+                )
                 self.input_nom.clear()
                 self.input_nombre.setValue(0)
                 self.gagnant.clear()
@@ -245,7 +249,7 @@ class Onglet1(QWidget):
             self.input_nom.clear()
             self.input_nombre.setValue(0)
 
-            self.sauvegarde[self.nom_partie.currentText()] = self.individus
+            self.sauvegarde[self.nom_partie.currentText()]["Joueurs"] = self.individus
             self.creer_sauvegarde()
 
             # Mise à jour de l'onglet 2
@@ -288,7 +292,7 @@ class Onglet1(QWidget):
             self.individus[nom2]["points_reference"] = (
                 self.individus[nom2]["points_reference"] + constantes.points_defaite
             )
-            self.sauvegarde[self.nom_partie.currentText()] = copy.deepcopy(
+            self.sauvegarde[self.nom_partie.currentText()]["Joueurs"] = copy.deepcopy(
                 self.individus
             )
 
