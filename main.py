@@ -535,12 +535,26 @@ class Onglet2(QWidget):
             table.setItem(row, 0, QTableWidgetItem(place))
             table.setItem(row, 1, QTableWidgetItem(nom_joueur))
             table.setItem(
-                row, 2, QTableWidgetItem(str(joueur_info["points_reference"]))
+                row,
+                2,
+                QTableWidgetItem(
+                    format(joueur_info["points_reference"], ",").replace(",", " ")
+                ),
             )
             table.setItem(
-                row, 3, QTableWidgetItem(str(joueur_info["points_officiels"]))
+                row,
+                3,
+                QTableWidgetItem(
+                    format(joueur_info["points_officiels"], ",").replace(",", " ")
+                ),
             )
-            table.setItem(row, 4, QTableWidgetItem(str(joueur_info["matches_joues"])))
+            table.setItem(
+                row,
+                4,
+                QTableWidgetItem(
+                    format(joueur_info["matches_joues"], ",").replace(",", " ")
+                ),
+            )
 
             if joueur_info["matches_joues"] == 0:
                 ratio_victoires = ""
@@ -579,7 +593,7 @@ class Onglet2(QWidget):
                 padding: 4px;
             }
             QTableWidget::item:selected {
-                background-color: #E0E0E0;
+                background-color: #D0E4FF;
             }
             QScrollBar:vertical {
                 border: none;
@@ -593,7 +607,7 @@ class Onglet2(QWidget):
                 border-radius: 2px;
             }
             QScrollBar::handle:vertical:hover {
-                background: #a0a0a0;
+                background: #A0A0A0;
             }
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
                 border: none;
