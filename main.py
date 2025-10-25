@@ -132,6 +132,7 @@ class Onglet1(QWidget):
         self.qlabel_dernier_match.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.set_QLabel_dernier_match()
         btn_supprimer_match = QPushButton("Supprimer le match")
+        btn_supprimer_match.clicked.connect(self.supprimer_dernier_match)
         layout_suppression_match.addWidget(self.qlabel_dernier_match)
         layout_suppression_match.addWidget(btn_supprimer_match)
         groupbox_suppression_match.setLayout(layout_suppression_match)
@@ -354,7 +355,7 @@ class Onglet1(QWidget):
             self.matchs_joues[max(self.matchs_joues.keys(), default=-1) + 1] = {
                 "gagnant": nom1,
                 "perdant": nom2,
-                "pts_gagant": pts_gagnant,
+                "pts_gagnant": pts_gagnant,
                 "pts_perdant": pts_perdant,
             }
 
@@ -384,10 +385,8 @@ class Onglet1(QWidget):
     def set_QLabel_dernier_match(self):
 
         if not self.matchs_joues:
-            print("B1")
             self.qlabel_dernier_match.setText("Aucun match n'a été joué.")
         else:
-            print("B2")
             self.qlabel_dernier_match.setText(
                 "Dernier match : "
                 f"{self.matchs_joues[max(self.matchs_joues.keys(), default=-1)].get('gagnant', '')}"
@@ -398,8 +397,76 @@ class Onglet1(QWidget):
 
     def supprimer_dernier_match(self):
 
-        # Charger le nouveau dernier match
-        self.set_QLabel_dernier_match()
+        # Récupération de la clef dernier match
+        clef = max(self.matchs_joues.keys(), default=-1)
+
+        if clef == -1:
+
+            # Erreur si le dernier match est inexistant
+            QMessageBox.warning(self, "Erreur", "Aucun match n'a été joué.")
+
+        else:
+
+            # Récupération du dernier match
+            gagnant = self.matchs_joues.get(clef).get("gagnant")
+            perdant = self.matchs_joues.get(clef).get("perdant")
+            pts_gagnant = self.matchs_joues.get(clef).get("pts_gagnant")
+            pts_perdant = self.matchs_joues.get(clef).get("pts_perdant")
+
+            reponse = QMessageBox.question(
+                self,
+                "Confirmation de suppression",
+                f"Souhaitez-vous définitivement supprimer le match suivant : {gagnant} bat {perdant} ?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+
+            if reponse == QMessageBox.StandardButton.Yes:
+
+                # Pour le gagnant
+                if gagnant in self.individus:
+
+                    # Mise à jour des matchs gagnés/joués
+                    self.individus[gagnant]["matches_joues"] = (
+                        self.individus[gagnant]["matches_joues"] - 1
+                    )
+                    self.individus[gagnant]["matches_gagnes"] = (
+                        self.individus[gagnant].get("matches_gagnes", 0) - 1
+                    )
+
+                    # Suppression des points
+                    self.individus[gagnant]["points_reference"] = (
+                        self.individus[gagnant]["points_reference"] - pts_gagnant
+                    )
+
+                # Pour le perdant
+                if perdant in self.individus:
+
+                    # Mise à jour des matchs gagnés/joués
+                    self.individus[perdant]["matches_joues"] = (
+                        self.individus[perdant]["matches_joues"] - 1
+                    )
+
+                    # Suppression des point
+                    self.individus[perdant]["points_reference"] = (
+                        self.individus[perdant]["points_reference"] - pts_perdant
+                    )
+
+                # Suppression du match dans l'historique
+                del self.matchs_joues[clef]
+
+                # Mise à jour de la sauvegarde
+                self.sauvegarde[self.nom_partie.currentText()]["Joueurs"] = (
+                    copy.deepcopy(self.individus)
+                )
+                self.sauvegarde[self.nom_partie.currentText()]["Matchs"] = (
+                    copy.deepcopy(self.matchs_joues)
+                )
+
+                self.creer_sauvegarde()
+                self.data_changed.emit(self.individus)
+
+                # Charger le nouveau dernier match
+                self.set_QLabel_dernier_match()
 
 
 class Onglet2(QWidget):
