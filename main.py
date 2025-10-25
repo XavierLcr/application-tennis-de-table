@@ -39,7 +39,8 @@ class Onglet1(QWidget):
         self.matchs_joues = {}
         layout = QVBoxLayout()
 
-        # --- Partie en cours ---
+        # === Partie en cours === #
+
         groupbox_partie = QGroupBox("Partie en cours")
         layout_partie = QHBoxLayout()
         self.nom_partie = QComboBox()
@@ -47,6 +48,7 @@ class Onglet1(QWidget):
         self.nom_partie.addItems(list(constantes.sauvegarde.keys()))
         self.nom_partie.setCurrentText("")
         layout_partie.addWidget(self.nom_partie)
+        self.nom_partie.currentIndexChanged.connect(self.initialiser_sauvegarde)
         self.nouvelle_partie = QPushButton("Nouvelle partie")
         layout_partie.addWidget(self.nouvelle_partie)
         self.nouvelle_partie.clicked.connect(self.ajouter_partie)
@@ -56,9 +58,12 @@ class Onglet1(QWidget):
         groupbox_partie.setLayout(layout_partie)
         layout.addWidget(groupbox_partie)
 
-        # --- Ajout d'individu ---
-        groupbox_individu = QGroupBox("Ajouter un individu")
-        hbox_individu = QHBoxLayout()
+        # === Gestion des individus === #
+
+        # --- Ajout d'individu --- #
+
+        groupbox_ajout_individu = QGroupBox("Ajouter un individu")
+        layout_ajout_individu = QVBoxLayout()
         self.input_nom = QLineEdit()
         self.input_nom.setPlaceholderText("Nom de l'individu")
         self.nom_partie.blockSignals(True)
@@ -74,14 +79,40 @@ class Onglet1(QWidget):
             "Si la case est cochée, le nombre de points à saisir correspond au classement officiel du joueur, afin de créer un classement de départ.\nSinon, cela correspond au nombre de points avec lequel le joueur débute la partie."
         )
         self.debut_partie.setChecked(True)
-        hbox_individu.addWidget(self.input_nom)
-        hbox_individu.addWidget(self.input_nombre)
-        hbox_individu.addWidget(self.debut_partie)
-        hbox_individu.addWidget(btn_ajouter)
-        groupbox_individu.setLayout(hbox_individu)
-        layout.addWidget(groupbox_individu)
+        layout_ajout_indiv_1 = QHBoxLayout()
+        layout_ajout_indiv_2 = QHBoxLayout()
+        layout_ajout_indiv_1.addWidget(self.input_nom)
+        layout_ajout_indiv_2.addWidget(self.input_nombre)
+        layout_ajout_indiv_1.addWidget(self.debut_partie)
+        layout_ajout_indiv_2.addWidget(btn_ajouter)
+        layout_ajout_individu.addLayout(layout_ajout_indiv_1)
+        layout_ajout_individu.addLayout(layout_ajout_indiv_2)
+        groupbox_ajout_individu.setLayout(layout_ajout_individu)
 
-        # --- Matchs ---
+        # --- Suppression d'un individu --- #
+
+        groupbox_supprimer_indiv = QGroupBox("Supprimer un individu")
+        self.layout_suppression_indiv = QVBoxLayout()
+        self.liste_indiv_suppression = QComboBox()
+        self.bouton_supprimer_individu = QPushButton("Supprimer cet individu")
+        self.bouton_supprimer_individu.clicked.connect(self.supprimer_individu)
+        self.layout_suppression_indiv.addWidget(self.liste_indiv_suppression)
+        self.layout_suppression_indiv.addWidget(self.bouton_supprimer_individu)
+        groupbox_supprimer_indiv.setLayout(self.layout_suppression_indiv)
+
+        # --- Mise côte-à-côte des deux groupboxes --- #
+
+        layout_individu = QHBoxLayout()
+        layout_individu.addWidget(groupbox_ajout_individu)
+        layout_individu.addWidget(groupbox_supprimer_indiv)
+        layout_individu.setStretch(0, 2)  # petite colonne gauche
+        layout_individu.setStretch(1, 1)
+        layout.addLayout(layout_individu)
+
+        # === Matchs === #
+
+        # --- Ajout des matchs --- #
+
         groupbox_match = QGroupBox("Ajouter un match entre deux individus")
         self.gagnant = QComboBox()
         self.perdant = QComboBox()
@@ -92,27 +123,7 @@ class Onglet1(QWidget):
         form_layout.addRow("Perdant :", self.perdant)
         form_layout.addRow(btn_match)
         groupbox_match.setLayout(form_layout)
-
-        # --- Supprimer un individu ---
-        groupbox_supprimer_indiv = QGroupBox("Supprimer un individu")
-        self.layout_suppression_indiv = QVBoxLayout()
-        self.liste_indiv_suppression = QComboBox()
-        self.bouton_supprimer_individu = QPushButton("Supprimer cet individu")
-        self.bouton_supprimer_individu.clicked.connect(self.supprimer_joueur)
-        self.layout_suppression_indiv.addWidget(self.liste_indiv_suppression)
-        self.layout_suppression_indiv.addWidget(self.bouton_supprimer_individu)
-        groupbox_supprimer_indiv.setLayout(self.layout_suppression_indiv)
-
-        # Mise côte-à-côte des deux groupboxes
-        groupbox_match_layout = QHBoxLayout()
-        groupbox_match_layout.addWidget(groupbox_match)
-        groupbox_match_layout.addWidget(groupbox_supprimer_indiv)
-        groupbox_match_layout.setStretch(0, 2)  # petite colonne gauche
-        groupbox_match_layout.setStretch(1, 1)
-
-        layout.addLayout(groupbox_match_layout)
-
-        self.nom_partie.currentIndexChanged.connect(self.initialiser_sauvegarde)
+        layout.addWidget(groupbox_match)
 
         self.setLayout(layout)
 
@@ -169,7 +180,7 @@ class Onglet1(QWidget):
             self.creer_sauvegarde()
             self.data_changed.emit(self.individus)
 
-    def supprimer_joueur(self):
+    def supprimer_individu(self):
 
         # Récupération du nom de la partie
         nom_partie = self.nom_partie.currentText()
@@ -340,6 +351,10 @@ class Onglet1(QWidget):
             encoding="utf-8",
         ) as f:
             yaml.dump(self.sauvegarde, f, allow_unicode=True, default_flow_style=False)
+
+    def supprimer_dernier_match(self):
+
+        pass
 
 
 class Onglet2(QWidget):
