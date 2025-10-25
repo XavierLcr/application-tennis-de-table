@@ -20,6 +20,9 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QGridLayout,
     QFormLayout,
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView,
 )
 from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtGui import QIcon
@@ -497,104 +500,113 @@ class Onglet2(QWidget):
         self.bouton_maj_classement_clique.emit(True)
 
     def afficher_classement(self, dict_joueurs):
+        # Supprimer l'ancien widget s'il existe
         for i in reversed(range(self.layout_resume_classement.count())):
             widget = self.layout_resume_classement.itemAt(i).widget()
             if widget:
                 widget.setParent(None)
 
-        self.layout_resume_classement.addWidget(
-            QLabel("Rang"), 0, 0, alignment=Qt.AlignmentFlag.AlignCenter
+        # Créer un QTableWidget
+        table = QTableWidget(len(self.liste_noms_tri), 7)
+        table.setHorizontalHeaderLabels(
+            [
+                "Rang",
+                "Joueur",
+                "Points",
+                "Classement\nofficiel",
+                "Matchs joués",
+                "Part de\nvictoires",
+                "Points/Match",
+            ]
         )
-        self.layout_resume_classement.addWidget(
-            QLabel("Joueur"), 0, 1, alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.layout_resume_classement.addWidget(
-            QLabel("Points"), 0, 2, alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.layout_resume_classement.addWidget(
-            QLabel("Classement officiel"), 0, 3, alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.layout_resume_classement.addWidget(
-            QLabel("Matchs joués"), 0, 4, alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.layout_resume_classement.addWidget(
-            QLabel("Part de victoires"), 0, 5, alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.layout_resume_classement.addWidget(
-            QLabel("Points/Match"), 0, 6, alignment=Qt.AlignmentFlag.AlignCenter
-        )
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        table.verticalHeader().setVisible(False)
+        table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        table.setSelectionMode(QTableWidget.SelectionMode.NoSelection)
 
-        for row, nom_joueur in enumerate(self.liste_noms_tri, start=1):
+        # Remplir le tableau
+        for row, nom_joueur in enumerate(self.liste_noms_tri, start=0):
             joueur_info = dict_joueurs[nom_joueur]
-
-            if row <= 3:
-                place = ["🥇", "🥈", "🥉"][row - 1]
+            if row < 3:
+                place = ["🥇", "🥈", "🥉"][row]
             else:
-                place = f"{row}ème"
+                place = f"{row+1}ème"
 
-            self.layout_resume_classement.addWidget(
-                QLabel(f"{place}"), row, 0, alignment=Qt.AlignmentFlag.AlignCenter
+            table.setItem(row, 0, QTableWidgetItem(place))
+            table.setItem(row, 1, QTableWidgetItem(nom_joueur))
+            table.setItem(
+                row, 2, QTableWidgetItem(str(joueur_info["points_reference"]))
             )
-            self.layout_resume_classement.addWidget(
-                QLabel(nom_joueur), row, 1, alignment=Qt.AlignmentFlag.AlignCenter
+            table.setItem(
+                row, 3, QTableWidgetItem(str(joueur_info["points_officiels"]))
             )
-            self.layout_resume_classement.addWidget(
-                QLabel(str(joueur_info["points_reference"])),
-                row,
-                2,
-                alignment=Qt.AlignmentFlag.AlignCenter,
-            )
-            self.layout_resume_classement.addWidget(
-                QLabel(str(joueur_info["points_officiels"])),
-                row,
-                3,
-                alignment=Qt.AlignmentFlag.AlignCenter,
-            )
-            self.layout_resume_classement.addWidget(
-                QLabel(str(joueur_info["matches_joues"])),
-                row,
-                4,
-                alignment=Qt.AlignmentFlag.AlignCenter,
-            )
+            table.setItem(row, 4, QTableWidgetItem(str(joueur_info["matches_joues"])))
 
-            # Stats
             if joueur_info["matches_joues"] == 0:
                 ratio_victoires = ""
                 ratio_points = ""
             else:
-                ratio_victoires = (
-                    str(
-                        round(
-                            100
-                            * joueur_info.get("matches_gagnes", 0)
-                            / joueur_info["matches_joues"],
-                            1,
-                        )
-                    ).replace(".", ",")
-                    + " %"
+                ratio_victoires = f"{round(100 * joueur_info.get('matches_gagnes', 0) / joueur_info['matches_joues'], 1):.0f} %".replace(
+                    ".", ","
                 )
-                ratio_points = str(
-                    round(
-                        joueur_info["points_reference"] / joueur_info["matches_joues"],
-                        1,
-                    )
-                ).replace(".", ",")
+                ratio_points = f"{round(joueur_info['points_reference'] / joueur_info['matches_joues'], 1):.1f}".replace(
+                    ".", ","
+                )
 
-            self.layout_resume_classement.addWidget(
-                QLabel(ratio_victoires),
-                row,
-                5,
-                alignment=Qt.AlignmentFlag.AlignCenter,
-            )
+            table.setItem(row, 5, QTableWidgetItem(ratio_victoires))
+            table.setItem(row, 6, QTableWidgetItem(ratio_points))
 
-            self.layout_resume_classement.addWidget(
-                QLabel(ratio_points),
-                row,
-                6,
-                alignment=Qt.AlignmentFlag.AlignCenter,
-            )
+            # Alignement centré pour toutes les cellules
+            for col in range(7):
+                item = table.item(row, col)
+                if item:
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.layout_resume_classement.setRowStretch(len(self.liste_noms_tri) + 1, 6)
+        # Style avec QSS
+        table.setStyleSheet(
+            """
+            QTableWidget {
+                border: 1px solid #D0D0D0;
+                gridline-color: #D0D0D0;
+                font-size: 12px;
+            }
+            QHeaderView::section {
+                background-color: #F0F0F0;
+                padding: 4px;
+                border: 1px solid #D0D0D0;
+            }
+            QTableWidget::item {
+                padding: 4px;
+            }
+            QTableWidget::item:selected {
+                background-color: #E0E0E0;
+            }
+            QScrollBar:vertical {
+                border: none;
+                background: #f0f0f0;
+                width: 12px;
+                margin: 0px;
+            }
+            QScrollBar::handle:vertical {
+                background: #c0c0c0;
+                min-height: 20px;
+                border-radius: 2px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background: #a0a0a0;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                border: none;
+                background: none;
+            }
+            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                background: none;
+            }
+        """
+        )
+
+        # Ajouter le tableau au layout
+        self.layout_resume_classement.addWidget(table)
 
 
 class FenetrePrincipale(QMainWindow):
