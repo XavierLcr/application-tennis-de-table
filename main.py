@@ -24,46 +24,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtGui import QIcon
 import fonctions_utiles
-
-# Chargement d'une sauvegrade si elle existe
-try:
-    with open(
-        os.path.join("sauvegarde_parties.yaml"),
-        "r",
-        encoding="utf-8",
-    ) as file:
-        sauvegarde = yaml.safe_load(file)
-except:
-    sauvegarde = {}
-
-# Chargement des intervalles de points s'ils existent
-try:
-
-    with open(
-        os.path.join("points_gagnes_par_match.yaml"), "r", encoding="utf-8"
-    ) as file:
-        points_par_match = yaml.safe_load(file)
-
-        # Récupération des points du gagnant
-        intervalles_gagnant_points = [
-            ((float(item["min"]), float(item["max"])), item["points"])
-            for item in points_par_match["intervalles_gagnant_points"]
-        ]
-
-        # Récupération des points du perdant
-        points_defaite = points_par_match["points_defaite"]
-
-
-except:
-
-    # Valeurs par défaut
-    intervalles_gagnant_points = [
-        ((float("-inf"), -3), 4),
-        ((-3, 0), 6),
-        ((0, 4), 8),
-        ((4, float("inf")), 10),
-    ]
-    points_defaite = 2
+import constantes
 
 
 class Onglet1(QWidget):
@@ -72,7 +33,7 @@ class Onglet1(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.sauvegarde = sauvegarde
+        self.sauvegarde = constantes.sauvegarde
 
         self.individus = {}
         layout = QVBoxLayout()
@@ -82,7 +43,7 @@ class Onglet1(QWidget):
         layout_partie = QHBoxLayout()
         self.nom_partie = QComboBox()
         self.nom_partie.setEditable(True)
-        self.nom_partie.addItems(list(sauvegarde.keys()))
+        self.nom_partie.addItems(list(constantes.sauvegarde.keys()))
         self.nom_partie.setCurrentText("")
         layout_partie.addWidget(self.nom_partie)
         self.nouvelle_partie = QPushButton("Nouvelle partie")
@@ -189,7 +150,9 @@ class Onglet1(QWidget):
         # Si confirmation de suppression
         if reponse == QMessageBox.StandardButton.Yes:
             self.sauvegarde = {
-                cle: valeur for cle, valeur in sauvegarde.items() if cle != nom
+                cle: valeur
+                for cle, valeur in constantes.sauvegarde.items()
+                if cle != nom
             }
             self.individus = {}
             self.nom_partie.removeItem(self.nom_partie.findText(nom))
@@ -319,11 +282,11 @@ class Onglet1(QWidget):
             self.individus[nom1]["points_reference"] = self.individus[nom1][
                 "points_reference"
             ] + fonctions_utiles.associer_intervalle(
-                intervalles=intervalles_gagnant_points,
+                intervalles=constantes.intervalles_gagnant_points,
                 valeur=liste_joueurs.index(nom1) - liste_joueurs.index(nom2),
             )
             self.individus[nom2]["points_reference"] = (
-                self.individus[nom2]["points_reference"] + points_defaite
+                self.individus[nom2]["points_reference"] + constantes.points_defaite
             )
             self.sauvegarde[self.nom_partie.currentText()] = copy.deepcopy(
                 self.individus
@@ -337,7 +300,7 @@ class Onglet1(QWidget):
     def creer_sauvegarde(self):
 
         with open(
-            os.path.join("sauvegarde_parties.yaml"),
+            os.path.join(constantes.dossier_donnees, "sauvegarde_parties.yaml"),
             "w",
             encoding="utf-8",
         ) as f:
@@ -477,7 +440,9 @@ class FenetrePrincipale(QMainWindow):
         super().__init__()
         self.setWindowTitle("Compétition hebdomadaire")
 
-        self.setWindowIcon(QIcon("logo-club.ico"))
+        self.setWindowIcon(
+            QIcon(os.path.join(constantes.dossier_donnees, "logo-club.ico"))
+        )
 
         onglets = QTabWidget()
         self.onglet_1 = Onglet1()
@@ -492,7 +457,7 @@ class FenetrePrincipale(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     try:
-        with open("theme.css") as f:
+        with open(os.path.join(constantes.dossier_donnees, "theme.css")) as f:
             app.setStyleSheet(f.read())
     except FileNotFoundError:
         pass
