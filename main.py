@@ -105,7 +105,7 @@ class Onglet1(QWidget):
         layout_individu = QHBoxLayout()
         layout_individu.addWidget(groupbox_ajout_individu)
         layout_individu.addWidget(groupbox_supprimer_indiv)
-        layout_individu.setStretch(0, 2)  # petite colonne gauche
+        layout_individu.setStretch(0, 2)
         layout_individu.setStretch(1, 1)
         layout.addLayout(layout_individu)
 
@@ -123,7 +123,29 @@ class Onglet1(QWidget):
         form_layout.addRow("Perdant :", self.perdant)
         form_layout.addRow(btn_match)
         groupbox_match.setLayout(form_layout)
-        layout.addWidget(groupbox_match)
+
+        # --- Suppression du dernier match --- #
+
+        groupbox_suppression_match = QGroupBox("Supprimer le dernier match")
+        layout_suppression_match = QVBoxLayout()
+        self.qlabel_dernier_match = QLabel()
+        self.qlabel_dernier_match.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.set_QLabel_dernier_match()
+        btn_supprimer_match = QPushButton("Supprimer le match")
+        layout_suppression_match.addWidget(self.qlabel_dernier_match)
+        layout_suppression_match.addWidget(btn_supprimer_match)
+        groupbox_suppression_match.setLayout(layout_suppression_match)
+
+        # --- Mise côte-à-côte des deux groupboxes --- #
+
+        layout_matchs = QHBoxLayout()
+        layout_matchs.addWidget(groupbox_match)
+        layout_matchs.addWidget(groupbox_suppression_match)
+        layout_matchs.setStretch(0, 5)
+        layout_matchs.setStretch(1, 3)
+        layout.addLayout(layout_matchs)
+
+        # === Layout global === #
 
         self.setLayout(layout)
 
@@ -141,6 +163,7 @@ class Onglet1(QWidget):
                 self.creer_sauvegarde()
                 # self.nom_partie.setCurrentIndex(self.nom_partie.currentIndex() + 1)
                 self.data_changed.emit(self.individus)
+                self.set_QLabel_dernier_match()
 
             else:
                 QMessageBox.warning(self, "Erreur", "Cette partie existe déjà.")
@@ -179,6 +202,7 @@ class Onglet1(QWidget):
             self.liste_indiv_suppression.clear()
             self.creer_sauvegarde()
             self.data_changed.emit(self.individus)
+            self.set_QLabel_dernier_match()
 
     def supprimer_individu(self):
 
@@ -227,6 +251,9 @@ class Onglet1(QWidget):
                 self.individus = self.sauvegarde[self.nom_partie.currentText()].get(
                     "Joueurs", {}
                 )
+                self.matchs_joues = self.sauvegarde[self.nom_partie.currentText()].get(
+                    "Matchs", {}
+                )
                 self.input_nom.clear()
                 self.input_nombre.setValue(0)
                 self.gagnant.clear()
@@ -236,6 +263,7 @@ class Onglet1(QWidget):
                 self.perdant.addItems(list(self.individus.keys()))
                 self.liste_indiv_suppression.addItems(list(self.individus.keys()))
                 self.data_changed.emit(self.individus)
+                self.set_QLabel_dernier_match()
 
     def ajouter_individu(self):
         nom = self.input_nom.text().strip()
@@ -342,6 +370,7 @@ class Onglet1(QWidget):
             self.data_changed.emit(self.individus)
 
             QMessageBox.information(self, "Match ajouté", f"{nom1} bat {nom2} !")
+            self.set_QLabel_dernier_match()
 
     def creer_sauvegarde(self):
 
@@ -352,9 +381,25 @@ class Onglet1(QWidget):
         ) as f:
             yaml.dump(self.sauvegarde, f, allow_unicode=True, default_flow_style=False)
 
+    def set_QLabel_dernier_match(self):
+
+        if not self.matchs_joues:
+            print("B1")
+            self.qlabel_dernier_match.setText("Aucun match n'a été joué.")
+        else:
+            print("B2")
+            self.qlabel_dernier_match.setText(
+                "Dernier match : "
+                f"{self.matchs_joues[max(self.matchs_joues.keys(), default=-1)].get('gagnant', '')}"
+                " bat "
+                f"{self.matchs_joues[max(self.matchs_joues.keys(), default=-1)].get('perdant', '')}"
+                "."
+            )
+
     def supprimer_dernier_match(self):
 
-        pass
+        # Charger le nouveau dernier match
+        self.set_QLabel_dernier_match()
 
 
 class Onglet2(QWidget):
