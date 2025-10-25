@@ -36,6 +36,7 @@ class Onglet1(QWidget):
         self.sauvegarde = constantes.sauvegarde
 
         self.individus = {}
+        self.matchs_joues = {}
         layout = QVBoxLayout()
 
         # --- Partie en cours ---
@@ -121,6 +122,7 @@ class Onglet1(QWidget):
             if nom not in list(self.sauvegarde.keys()):
                 self.sauvegarde[nom] = {"Joueurs": {}, "Matchs": {}}
                 self.individus = {}
+                self.matchs_joues = {}
                 self.nom_partie.addItem(nom)
                 self.gagnant.clear()
                 self.perdant.clear()
@@ -155,6 +157,7 @@ class Onglet1(QWidget):
                 if cle != nom
             }
             self.individus = {}
+            self.matchs_joues = {}
             self.nom_partie.removeItem(self.nom_partie.findText(nom))
             self.nom_partie.blockSignals(True)
             self.nom_partie.setCurrentText("")
@@ -258,21 +261,31 @@ class Onglet1(QWidget):
             QMessageBox.warning(self, "Erreur", "Nom vide ou déjà existant.")
 
     def ajouter_match(self):
+
+        # Récupéartion des noms des joueurs
         nom1 = self.gagnant.currentText()
         nom2 = self.perdant.currentText()
 
         if nom1 == nom2:
+
+            # Les joueurs doivent être différents
             QMessageBox.warning(
                 self, "Erreur", "Un match nécessite deux individus différents."
             )
+
         elif self.nom_partie.currentText() not in self.sauvegarde:
+
+            # La partie doit exister
             QMessageBox.warning(self, "Erreur", "Aucune partie n'est chargée.")
+
         else:
 
+            # Tri des joueurs
             liste_joueurs = fonctions_utiles.trier_cles_par_params(
                 self.individus, "points_reference", "points_officiels"
             )
 
+            # Mise à jour des matchs gagnés/joués
             self.individus[nom1]["matches_joues"] = (
                 self.individus[nom1]["matches_joues"] + 1
             )
@@ -283,17 +296,35 @@ class Onglet1(QWidget):
                 self.individus[nom2]["matches_joues"] + 1
             )
 
-            self.individus[nom1]["points_reference"] = self.individus[nom1][
-                "points_reference"
-            ] + fonctions_utiles.associer_intervalle(
+            # Ajout du nombre de points du vainqueur
+            pts_gagnant = fonctions_utiles.associer_intervalle(
                 intervalles=constantes.intervalles_gagnant_points,
                 valeur=liste_joueurs.index(nom1) - liste_joueurs.index(nom2),
             )
-            self.individus[nom2]["points_reference"] = (
-                self.individus[nom2]["points_reference"] + constantes.points_defaite
+            self.individus[nom1]["points_reference"] = (
+                self.individus[nom1]["points_reference"] + pts_gagnant
             )
+
+            # Ajout du nombre de points du perdant
+            pts_perdant = copy.copy(constantes.points_defaite)
+            self.individus[nom2]["points_reference"] = (
+                self.individus[nom2]["points_reference"] + pts_perdant
+            )
+
+            # Ajout du match à la liste de matchs
+            self.matchs_joues[max(self.matchs_joues.keys(), default=-1) + 1] = {
+                "gagnant": nom1,
+                "perdant": nom2,
+                "pts_gagant": pts_gagnant,
+                "pts_perdant": pts_perdant,
+            }
+
+            # Mise à jour des données
             self.sauvegarde[self.nom_partie.currentText()]["Joueurs"] = copy.deepcopy(
                 self.individus
+            )
+            self.sauvegarde[self.nom_partie.currentText()]["Matchs"] = copy.deepcopy(
+                self.matchs_joues
             )
 
             self.creer_sauvegarde()
