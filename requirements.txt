@@ -1,3 +1,3 @@
-PyQt6
-cx_Freeze
-PyYAML
+PyQt6==6.10.2
+cx_Freeze==8.5.3
+PyYAML==6.0.3

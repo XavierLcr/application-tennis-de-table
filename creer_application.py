@@ -8,7 +8,15 @@ setup(
     description="",
     options={
         "build_exe": {
-            "build_exe": r"C:\Users\xaruo\Documents\Tennis de table\Logiciel pour Florian\application-tennis-de-table\application",
+            "build_exe": os.path.join(
+                r"C:\Users",
+                "xaruo",
+                "Documents",
+                "Tennis de table",
+                "Logiciel pour Florian",
+                "application-tennis-de-table",
+                "Application compilée",
+            ),
             "packages": ["os", "sys", "PyQt6", "yaml"],
             "include_files": [(dossier_donnees, dossier_donnees)],
         }
@@ -18,7 +26,7 @@ setup(
             "main.py",
             icon=os.path.join(dossier_donnees, "logo-club.ico"),
             target_name="Compétition hebdomadaire.exe",
-            base="Win32GUI",
+            base="gui",
         )
     ],
 )
