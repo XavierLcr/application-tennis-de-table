@@ -1,7 +1,7 @@
 ################################################################################
 # Application pour un tournoi à pénalités                                      #
 # Auteur : Xavier Lacour                                                       #
-# Script contenant des fonctions utiles                                        #
+# 0. Script contenant des fonctions utiles                                     #
 ################################################################################
 
 

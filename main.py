@@ -34,7 +34,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtGui import QIcon
 
-import fonctions_utiles
+from _0_fonctions_utiles import trier_cles_par_params, associer_intervalle
 import constantes
 
 
@@ -338,7 +338,7 @@ class Onglet1(QWidget):
         else:
 
             # Tri des joueurs
-            liste_joueurs = fonctions_utiles.trier_cles_par_params(
+            liste_joueurs = trier_cles_par_params(
                 self.individus, "points_reference", "points_officiels"
             )
 
@@ -354,7 +354,7 @@ class Onglet1(QWidget):
             )
 
             # Ajout du nombre de points du vainqueur
-            pts_gagnant = fonctions_utiles.associer_intervalle(
+            pts_gagnant = associer_intervalle(
                 intervalles=constantes.intervalles_gagnant_points,
                 valeur=liste_joueurs.index(nom1) - liste_joueurs.index(nom2),
             )
@@ -508,7 +508,7 @@ class Onglet2(QWidget):
         self.setLayout(layout)
 
     def mettre_a_jour(self, dict_joueurs):
-        self.liste_noms_tri = fonctions_utiles.trier_cles_par_params(
+        self.liste_noms_tri = trier_cles_par_params(
             dict_joueurs, "points_reference", "points_officiels"
         )
         self.afficher_classement(dict_joueurs)
