@@ -2,7 +2,7 @@
 sauvegarde_parties.yaml
 
 # .exe
-application/
+Application compilée/
 
 # Fichiers temporaires
 *.pyc
