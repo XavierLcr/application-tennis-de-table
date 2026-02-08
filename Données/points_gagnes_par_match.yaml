@@ -1,4 +1,13 @@
-# Points du vainqueur
+################################################################################
+# Application pour un tournoi à pénalités                                      #
+# Auteur : Xavier Lacour                                                       #
+# Intervalles de points gagnés par le perdant et le vainqueur de chaque match  #
+################################################################################
+
+
+# 1 -- Points du vainqueur -----------------------------------------------------
+
+
 # Le type d'intervalles considéré est [min ; max[
 intervalles_gagnant_points:
   - min: -inf
@@ -14,5 +23,7 @@ intervalles_gagnant_points:
     max: inf
     points: 10
 
-# Points du perdant
+# 2 -- Points du perdant -------------------------------------------------------
+
+
 points_defaite: 2

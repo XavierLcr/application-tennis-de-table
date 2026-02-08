@@ -1,25 +1,26 @@
 ################################################################################
-# Application pour le tennis de table                                          #
-# Constantes                                                                   #
+# Application pour un tournoi à pénalités                                      #
+# Auteur : Xavier Lacour                                                       #
+# Script contenant les constantes, logos, thèmes, ...                          #
 ################################################################################
 
 
-# 1 -- Initialisation ----------------------------------------------------------
+# 0 -- Initialisation ----------------------------------------------------------
 
 
 import os, yaml
 
 
-# 2 -- Définition des chemins --------------------------------------------------
+# 1 -- Définition des chemins --------------------------------------------------
 
 
 dossier_donnees = "Données"
 
 
-# 3 -- Ouverture des fichiers --------------------------------------------------
+# 2 -- Ouverture des fichiers --------------------------------------------------
 
 
-## 3.1 -- Sauvegrade des parties -----------------------------------------------
+## 2.1 -- Sauvegrade des parties -----------------------------------------------
 
 
 try:
@@ -36,7 +37,7 @@ except:
     sauvegarde = {}
 
 
-## 3.2 -- Chargement des intervalles de points ---------------------------------
+## 2.2 -- Chargement des intervalles de points ---------------------------------
 
 
 try:

@@ -1,7 +1,14 @@
-import sys
-import os
-import yaml
-import copy
+################################################################################
+# Application pour un tournoi à pénalités                                      #
+# Auteur : Xavier Lacour                                                       #
+# Script principal de l'application                                            #
+################################################################################
+
+
+# 0 -- Initialisation ----------------------------------------------------------
+
+
+import sys, os, yaml, copy
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -26,8 +33,15 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtGui import QIcon
+
 import fonctions_utiles
 import constantes
+
+
+# 1 -- Classes de l'application ------------------------------------------------
+
+
+## 1.1 -- Onglet n°1 -----------------------------------------------------------
 
 
 class Onglet1(QWidget):
@@ -472,6 +486,9 @@ class Onglet1(QWidget):
                 self.set_QLabel_dernier_match()
 
 
+## 2.2 -- Onglet n°2 -----------------------------------------------------------
+
+
 class Onglet2(QWidget):
 
     bouton_maj_classement_clique = pyqtSignal(bool)
@@ -623,6 +640,9 @@ class Onglet2(QWidget):
         self.layout_resume_classement.addWidget(table)
 
 
+## 1.3 -- Classe de l'application ----------------------------------------------
+
+
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -640,6 +660,9 @@ class FenetrePrincipale(QMainWindow):
         onglets.addTab(self.onglet_1, "Compétition ​🏓​")
         onglets.addTab(self.onglet_2, "Classement 🏆​")
         self.setCentralWidget(onglets)
+
+
+# 2 -- Exécution ---------------------------------------------------------------
 
 
 if __name__ == "__main__":

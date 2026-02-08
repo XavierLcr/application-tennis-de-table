@@ -1,3 +1,13 @@
+################################################################################
+# Application pour un tournoi à pénalités                                      #
+# Auteur : Xavier Lacour                                                       #
+# Script contenant des fonctions utiles                                        #
+################################################################################
+
+
+# 1 -- Fonction de tri d'un dictionnaire de dictionnaires selon des clefs ------
+
+
 def trier_cles_par_params(dictionnaire, *parametres):
 
     # Trier les tuples selon tous les paramètres donnés, dans l'ordre décroissant
@@ -12,6 +22,9 @@ def trier_cles_par_params(dictionnaire, *parametres):
 
     # Extraire uniquement les clés triées
     return [cle for cle, *_ in cles_et_valeurs_triees]
+
+
+# 2 -- Fonction de renvoi du nombre de points gagnés ---------------------------
 
 
 def associer_intervalle(intervalles, valeur):

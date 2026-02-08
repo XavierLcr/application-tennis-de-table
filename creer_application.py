@@ -1,10 +1,24 @@
+################################################################################
+# Application pour un tournoi à pénalités                                      #
+# Auteur : Xavier Lacour                                                       #
+# Script afin de créer le .exe de l'application                                #
+################################################################################
+
+
+# 0 -- Initialisation ----------------------------------------------------------
+
+
 from cx_Freeze import setup, Executable
 from constantes import dossier_donnees
 import os
 
+
+# 1 -- Création du .exe --------------------------------------------------------
+
+
 setup(
     name="Compétition hebdomadaire",
-    version="1.0",
+    version="1.2",
     description="",
     options={
         "build_exe": {
