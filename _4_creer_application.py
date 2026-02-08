@@ -1,7 +1,7 @@
 ################################################################################
 # Application pour un tournoi à pénalités                                      #
 # Auteur : Xavier Lacour                                                       #
-# Script afin de créer le .exe de l'application                                #
+# 4. Script afin de créer le .exe de l'application                             #
 ################################################################################
 
 
@@ -37,7 +37,7 @@ setup(
     },
     executables=[
         Executable(
-            "main.py",
+            "_3_main.py",
             icon=os.path.join(dossier_donnees, "logo-club.ico"),
             target_name="Compétition hebdomadaire.exe",
             base="gui",
